@@ -1,0 +1,56 @@
+classDiagram
+    class Lecturer {
+        <<Entity>>
+        +LecturerID : int <<PK>>
+        -Name : string
+        -Email : string
+        -Department : string
+        +submitClaim(claim : Claim) : void
+        +viewClaims() : List~Claim~
+    }
+    class Claim {
+        <<Entity>>
+        +ClaimID : int <<PK>>
+        -LecturerID : int <<FK>>
+        -ApproverID : int <<FK>>
+        -DateSubmitted : date
+        -DateApproved : date
+        -Status : ClaimStatus
+        -TotalAmount : decimal
+        +uploadDocument(doc : Document) : void
+        +updateStatus(status : ClaimStatus) : void
+    }
+    class Approver {
+        <<Entity>>
+        +ApproverID : int <<PK>>
+        -Name : string
+        -Email : string
+        -Role : ApproverRole
+        +approveClaim(claim : Claim) : void
+        +rejectClaim(claim : Claim) : void
+    }
+    class Document {
+        <<Entity>>
+        +DocumentID : int <<PK>>
+        -ClaimID : int <<FK>>
+        -FilePath : string
+        -UploadDate : date
+        +getFileType() : string
+    }
+    class ClaimStatus {
+        <<Enumeration>>
+        SUBMITTED
+        PENDING
+        APPROVED
+        REJECTED
+    }
+    class ApproverRole {
+        <<Enumeration>>
+        PROGRAMME_COORDINATOR
+        ACADEMIC_MANAGER
+    }
+    Lecturer "1" -- "0..*" Claim : submits
+    Approver "1" -- "0..*" Claim : approves
+    Claim "1" -- "0..*" Document : has
+    Claim ..> ClaimStatus : uses
+    Approver ..> ApproverRole : has
